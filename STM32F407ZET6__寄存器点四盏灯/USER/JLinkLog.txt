@@ -1,0 +1,87 @@
+T3F90 000:041.264   SEGGER J-Link V7.96o Log File
+T3F90 000:041.388   DLL Compiled: Jun 26 2024 16:14:23
+T3F90 000:041.398   Logging started @ 2024-06-28 11:52
+T3F90 000:041.408   Process: D:\Keil_v5\UV4\UV4.exe
+T3F90 000:041.421 - 41.417ms
+T3F90 000:041.434 JLINK_SetWarnOutHandler(...)
+T3F90 000:041.444 - 0.011ms
+T3F90 000:041.454 JLINK_OpenEx(...)
+T3F90 000:043.491   Firmware: J-Link ARM-OB STM32 compiled Aug 22 2012 19:52:04
+T3F90 000:044.030   Firmware: J-Link ARM-OB STM32 compiled Aug 22 2012 19:52:04
+T3F90 000:045.499   Hardware: V7.00
+T3F90 000:045.534   S/N: 20090929
+T3F90 000:045.548   OEM: SEGGER
+T3F90 000:045.562   Feature(s): RDI,FlashDL,FlashBP,JFlash,GDBFull
+T3F90 000:045.846   Bootloader: (Could not read)
+T3F90 000:047.497   TELNET listener socket opened on port 19021
+T3F90 000:047.607   WEBSRV WEBSRV_Init(): Starting webserver thread(s)
+T3F90 000:047.724   WEBSRV Webserver running on local port 19080
+T3F90 000:047.802   Looking for J-Link GUI Server exe at: D:\Keil_v5\ARM\Segger\JLinkGUIServer.exe
+T3F90 000:047.876   Looking for J-Link GUI Server exe at: C:\Program Files\SEGGER\JLink_V796o\JLinkGUIServer.exe
+T3F90 000:047.917   Forking J-Link GUI Server: C:\Program Files\SEGGER\JLink_V796o\JLinkGUIServer.exe
+T3F90 000:055.372   J-Link GUI Server info: "J-Link GUI server V7.96o "
+T3F90 000:059.850 - 18.389ms returns "O.K."
+T3F90 000:059.883 JLINK_GetEmuCaps()
+T3F90 000:059.896 - 0.011ms returns 0x88EA5833
+T3F90 000:059.915 JLINK_TIF_GetAvailable(...)
+T3F90 000:060.094 - 0.179ms
+T3F90 000:060.112 JLINK_SetErrorOutHandler(...)
+T3F90 000:060.122 - 0.010ms
+T3F90 000:060.150 JLINK_ExecCommand("ProjectFile = "E:\yueqian\32\STM32F407ZET6\STM32F407ZET6__¼Ä´æÆ÷µãËÄÕµµÆ\USER\JLinkSettings.ini"", ...). 
+T3F90 000:072.890   Ref file found at: D:\Keil_v5\ARM\Segger\JLinkDevices.ref
+T3F90 000:072.987   REF file references invalid XML file: C:\Program Files\SEGGER\JLink_V796o\JLinkDevices.xml
+T3F90 000:074.210 - 14.062ms returns 0x00
+T3F90 000:075.427 JLINK_ExecCommand("Device = STM32F407ZETx", ...). 
+T3F90 000:077.038   Device "STM32F407ZE" selected.
+T3F90 000:077.262 - 1.807ms returns 0x00
+T3F90 000:077.282 JLINK_ExecCommand("DisableConnectionTimeout", ...). 
+T3F90 000:077.297   ERROR: Unknown command
+T3F90 000:077.311 - 0.017ms returns 0x01
+T3F90 000:077.323 JLINK_GetHardwareVersion()
+T3F90 000:077.333 - 0.010ms returns 70000
+T3F90 000:077.344 JLINK_GetDLLVersion()
+T3F90 000:077.354 - 0.009ms returns 79615
+T3F90 000:077.364 JLINK_GetOEMString(...)
+T3F90 000:077.375 JLINK_GetFirmwareString(...)
+T3F90 000:077.385 - 0.010ms
+T3F90 000:081.183 JLINK_GetDLLVersion()
+T3F90 000:081.216 - 0.032ms returns 79615
+T3F90 000:081.227 JLINK_GetCompileDateTime()
+T3F90 000:081.237 - 0.009ms
+T3F90 000:082.133 JLINK_GetFirmwareString(...)
+T3F90 000:082.152 - 0.019ms
+T3F90 000:087.013 JLINK_GetHardwareVersion()
+T3F90 000:087.042 - 0.029ms returns 70000
+T3F90 000:088.967 JLINK_GetSN()
+T3F90 000:088.996 - 0.029ms returns 20090929
+T3F90 000:090.656 JLINK_GetOEMString(...)
+T3F90 000:094.145 JLINK_TIF_Select(JLINKARM_TIF_SWD)
+T3F90 000:094.486 - 0.341ms returns 0x00
+T3F90 000:094.504 JLINK_HasError()
+T3F90 000:094.521 JLINK_SetSpeed(5000)
+T3F90 000:094.582 - 0.062ms
+T3F90 000:094.596 JLINK_GetId()
+T3F90 000:097.125   InitTarget() start
+T3F90 000:097.177    J-Link Script File: Executing InitTarget()
+T3F90 000:099.396   SWD selected. Executing JTAG -> SWD switching sequence.
+T3F90 000:102.924   Error: Failed to initialized DAP.
+T3F90 000:105.034   Can not attach to CPU. Trying connect under reset.
+T3F90 000:157.608   SWD selected. Executing JTAG -> SWD switching sequence.
+T3F90 000:161.634   Error: Failed to initialized DAP.
+T3F90 000:164.935   Connecting to CPU via connect under reset failed.
+T3F90 000:221.223   InitTarget() end - Took 118ms
+T3F90 000:226.502   Connect failed. Resetting via Reset pin and trying again.
+T3F90 000:293.454   InitTarget() start
+T3F90 000:293.543    J-Link Script File: Executing InitTarget()
+T3F90 000:299.557   SWD selected. Executing JTAG -> SWD switching sequence.
+T3F90 000:306.890   Error: Failed to initialized DAP.
+T3F90 000:313.275   Can not attach to CPU. Trying connect under reset.
+T3F90 000:368.081   SWD selected. Executing JTAG -> SWD switching sequence.
+T3F90 000:372.862   Error: Failed to initialized DAP.
+T3F90 000:375.845   Connecting to CPU via connect under reset failed.
+T3F90 000:432.252   InitTarget() end - Took 133ms
+T3F90 000:432.350 - 337.752ms returns 0x00000000
+T3F90 001:582.794 JLINK_Close()
+T3F90 001:589.353 - 6.558ms
+T3F90 001:589.386   
+T3F90 001:589.395   Closed
