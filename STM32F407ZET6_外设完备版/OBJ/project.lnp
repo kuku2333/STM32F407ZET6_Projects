@@ -16,6 +16,7 @@
 "..\obj\gpio.o"
 "..\obj\key.o"
 "..\obj\uasrt_send_string.o"
+"..\obj\wave.o"
 "..\obj\main.o"
 "..\obj\stm32f4xx_it.o"
 --strict --scatter "..\OBJ\project.sct"

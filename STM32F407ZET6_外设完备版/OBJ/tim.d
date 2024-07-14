@@ -35,3 +35,8 @@
 ..\obj\tim.o: ..\DEVICE_LIB\inc\stm32f4xx_dac.h
 ..\obj\tim.o: ..\DEVICE_LIB\inc\stm32f4xx_dcmi.h
 ..\obj\tim.o: ..\DEVICE_LIB\inc\stm32f4xx_fsmc.h
+..\obj\tim.o: ..\HARDWARE\Uasrt_Send_String\Uasrt_Send_String.h
+..\obj\tim.o: ..\SYSTEM\Delay\Delay.h
+..\obj\tim.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\tim.o: ..\HARDWARE\Wave\Wave.h
+..\obj\tim.o: ..\SYSTEM\sys\sys.h

@@ -12,6 +12,8 @@ uint32_t g_cap_val;
   *		   4.配置定时器输出比较结构体并初始化
   *		   5.使用这个函数TIM_OCxPreloadConfig(TIMx, TIM_OCPreload_ENABLE);
   *		   6.使能定时器
+  *
+  *			TIM3_CH2-->PC7-->Camera9
   */
 void Tim14_PWM_Init(void)
 {
@@ -52,22 +54,67 @@ void Tim14_PWM_Init(void)
    ******************************************************************************
 **/
 	TIM_TimeBaseStructure.TIM_Prescaler			=	8400 - 1;//84000000/8400=10000HZ
-	TIM_TimeBaseStructure.TIM_Period			=	100 - 1;//10000/100=100HZ=100ms
+	TIM_TimeBaseStructure.TIM_Period			=	100 - 1;//10000/100=100HZ=10ms
 	TIM_TimeBaseStructure.TIM_CounterMode		=	TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM14, &TIM_TimeBaseStructure);
 	
 	/*输出比较配置*/
     TIM_OCInitStructure.TIM_OCMode 			= 		TIM_OCMode_PWM1;//选择PWM1模式，
     TIM_OCInitStructure.TIM_OutputState 	= 		TIM_OutputState_Enable;
-    TIM_OCInitStructure.TIM_Pulse 			= 		30;
-    TIM_OCInitStructure.TIM_OCPolarity 		= 		TIM_OCPolarity_Low;/*决定当前值与设定的值相等时
+    TIM_OCInitStructure.TIM_Pulse 			= 		0;
+    TIM_OCInitStructure.TIM_OCPolarity 		= 		TIM_OCPolarity_High;/*决定当前值与设定的值相等时
 													引脚输出什么电平，在PWD时，很明显要设置成低电平*/
-    TIM_OC1Init(TIM14, &TIM_OCInitStructure);
+    //TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+	TIM_OC1Init(TIM14, &TIM_OCInitStructure);
 
 	/*使能或者失能TIMx外设周期寄存器在CCR2上，在配置脉冲波时，这个函数是强制使用的*/
-	TIM_OC2PreloadConfig(TIM14, TIM_OCPreload_Disable);
+	TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Disable);
+	//TIM_OC1PreloadConfig(TIM14, TIM_OCPreload_Disable);
 	
 	TIM_Cmd(TIM14, ENABLE);//使能定时器
+}
+
+/* TIM3_CH2-->PC7-->Camera9*/
+void Tim3_CH2_PWM_Init(void)
+{
+	//定义时基、GPIO、输出比较结构体
+	TIM_TimeBaseInitTypeDef		TIM_TimeBaseStructure;
+	GPIO_InitTypeDef			GPIO_InitStructure;
+	TIM_OCInitTypeDef  			TIM_OCInitStructure;
+
+	//开启定时器、GPIO的时钟
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);//开启TIM14的时钟，在APB1上
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+	
+	/* GPIOF 配置: TIM14 CH1 (PF9)*/
+    GPIO_InitStructure.GPIO_Pin 	= 	GPIO_Pin_7;//引脚9
+    GPIO_InitStructure.GPIO_Mode 	= 	GPIO_Mode_AF;//复用模式
+    GPIO_InitStructure.GPIO_Speed 	= 	GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_OType 	= 	GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_PuPd 	= 	GPIO_PuPd_UP;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);//初始化
+	
+	GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_TIM3);//引脚映射到定时器
+	
+	TIM_TimeBaseStructure.TIM_Prescaler			=	8400 - 1;//84000000/8400=10000HZ
+	TIM_TimeBaseStructure.TIM_Period			=	100 - 1;//10000/100=1000HZ=10ms
+	TIM_TimeBaseStructure.TIM_CounterMode		=	TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+	
+	/*输出比较配置*/
+    TIM_OCInitStructure.TIM_OCMode 			= 		TIM_OCMode_PWM1;//选择PWM1模式，
+    TIM_OCInitStructure.TIM_OutputState 	= 		TIM_OutputState_Enable;
+    TIM_OCInitStructure.TIM_Pulse 			= 		0;
+    TIM_OCInitStructure.TIM_OCPolarity 		= 		TIM_OCPolarity_High;/*决定当前值与设定的值相等时
+													引脚输出什么电平，在PWD时，很明显要设置成低电平*/
+    //TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+	TIM_OC2Init(TIM3, &TIM_OCInitStructure);
+
+	/*使能或者失能TIMx外设周期寄存器在CCR2上，在配置脉冲波时，这个函数是强制使用的*/
+	//TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Disable);
+	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Disable);
+	
+	TIM_Cmd(TIM3, ENABLE);//使能定时器
 }
 
 /****
@@ -84,7 +131,9 @@ void Tim14_PWM_Init(void)
 	*			8.调用TIM_Cmd(ENABLE)函数使能定时器
 	*			9.使用TIM_GetCapturex(TIMx)函数来读取捕获的值
     ************************************************************************************
-    * 
+    * @function		用定时器13捕获波形，引脚连到超声波模块的ECHO上，查看ECHO上的输入
+	*				情况,用通道1
+	*				PA6->TIM13_CH1-->Camera16
     ************************************************************************************
 *****/
 void Tim13_InputCapture_Init(void)
@@ -94,31 +143,25 @@ void Tim13_InputCapture_Init(void)
 	TIM_ICInitTypeDef  			TIM_ICInitStructure;
 	NVIC_InitTypeDef 			NVIC_InitStructure;
 
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM13, ENABLE);//开启TIM14的时钟，在APB1上
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM13, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 	
-	/* GPIOF 配置: TIM14 CH1 (PF9)*/
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_TIM13);
+	
+	/* */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 	
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_TIM13);
-	
-	TIM_TimeBaseStructure.TIM_Prescaler			=	8400 - 1;
-	TIM_TimeBaseStructure.TIM_Period			=	10 -  1;
+	TIM_TimeBaseStructure.TIM_Prescaler			=	65536 - 1;
+	TIM_TimeBaseStructure.TIM_Period			=	84 - 1;
 	TIM_TimeBaseStructure.TIM_CounterMode		=	TIM_CounterMode_Up;
-	//TIM_TimeBaseStructure.TIM_ClockDivision		=	TIM_CKD_DIV1;
+	TIM_TimeBaseStructure.TIM_ClockDivision		=	TIM_CKD_DIV1;
+	TIM_TimeBaseStructure.TIM_RepetitionCounter = 	0;
 	TIM_TimeBaseInit(TIM13, &TIM_TimeBaseStructure);
-	
-	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
-    TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
-    TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
-    TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
-    TIM_ICInitStructure.TIM_ICFilter = 0x0;
-    TIM_ICInit(TIM1, &TIM_ICInitStructure);
 	
 	/* Enable the TIM1 global Interrupt */
     NVIC_InitStructure.NVIC_IRQChannel = TIM8_UP_TIM13_IRQn;
@@ -126,17 +169,68 @@ void Tim13_InputCapture_Init(void)
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
-
+	
+	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
+    TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+    TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
+    TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+    TIM_ICInitStructure.TIM_ICFilter = 0x00;
+    TIM_ICInit(TIM13, &TIM_ICInitStructure);
+	
+	TIM_ITConfig(TIM13, TIM_IT_CC1 | TIM_IT_Update, ENABLE);
+	
+	TIM_SetCounter(TIM13, 0);
+	
 	/* TIM enable counter */
     TIM_Cmd(TIM13, ENABLE);
-
+	
+//	TIM_ITConfig(TIM13, TIM_IT_CC1, ENABLE);
 }
 
-void TIM8_TRG_COM_TIM14_IRQHandler(void)
+void TIM8_UP_TIM13_IRQHandler(void)
 {
 	if(TIM_GetITStatus(TIM13, TIM_IT_CC1) == SET)
+    {
+        g_cap_val = TIM_GetCapture1(TIM13);
+        TIM_ClearITPendingBit(TIM13, TIM_IT_CC1);
+    }
+
+    if(TIM_GetITStatus(TIM13, TIM_IT_Update) == SET)
+    {
+        TIM_ClearITPendingBit(TIM13, TIM_IT_Update);
+    }
+}
+
+/* 用TIM13的输入捕获通道1来捕获超声波模块的回响信号*/
+void Input_Capture_test(void)
+{
+	/* 记得在主函数里写初始化函数*/
+
+	/* 发出触发信号*/
+	PCout(6) = 1;
+	Delay_us(15);
+	PCout(6) = 0;
+	
+	printf("The value is: %d\r\n", g_cap_val);
+	
+	Delay_s(1);
+}
+
+uint32_t Get_Frequence(void)
+{
+	return 1000000 / TIM_GetCapture1(TIM3);
+}
+
+void Breath_Light(void)
+{
+	for(uint8_t i = 0; i < 100; i++)
 	{
-		g_cap_val = TIM_GetCapture1(TIM13);
+		TIM14->CCR1 = i;
+		Delay_ms(10);
 	}
-	TIM_ClearFlag(TIM13, TIM_FLAG_CC1);
+	for(uint8_t i = 100; i > 0; i--)
+	{
+		TIM14->CCR1 = i;
+		Delay_ms(10);
+	}
 }

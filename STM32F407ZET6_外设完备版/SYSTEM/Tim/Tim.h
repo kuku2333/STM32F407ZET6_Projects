@@ -14,8 +14,15 @@
 #define __TIM_H
 
 #include "stm32f4xx.h"                  // Device header
+#include "Uasrt_Send_String.h"
+#include "Wave.h"
+#include "Delay.h"
 
 void Tim14_PWM_Init(void);
+void Tim3_CH2_PWM_Init(void);
 void Tim13_InputCapture_Init(void);
+void Input_Capture_test(void);
+uint32_t Get_Frequence(void);
+void Breath_Light(void);
 
 #endif

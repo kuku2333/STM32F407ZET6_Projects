@@ -117,7 +117,7 @@ uint8_t IIC_Wait_Slave_Ack(void)
 	return ack;
 }
 
-void IIC_Send_Ack(uint8_t ack)
+void IIC_SendAck(uint8_t ack)
 {
 	SDA_Pin_Mode(GPIO_Mode_OUT);//确保SDA引脚为输出模式
 
@@ -149,18 +149,16 @@ void IIC_Send_Ack(uint8_t ack)
 }
 
 void IIC_Send_Byte(uint8_t byte)
-{
-	int32_t i;
-	
+{	
 	SDA_Pin_Mode(GPIO_Mode_OUT);//确保SDA引脚为输出模式
 	
 	SCL_W(Bit_RESET);//拉低，允许数据交换
 	Delay_us(5);
 	
-	for(i=7; i>=0; i--)
+	for(int32_t i = 7; i >= 0; i--)
 	{
 		//优先去设置SDA引脚的电平
-		if(byte & (1<<i))
+		if(byte & (1 << i))
 			SDA_W(Bit_SET);
 		else
 			SDA_W(Bit_RESET);

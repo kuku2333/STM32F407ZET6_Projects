@@ -16,21 +16,29 @@
 #include "Gpio.h"
 #include "Tim.h"
 #include "Uasrt_Send_String.h"
-//#include <stdio.h>
 
 int main(void)
 {
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-	//Led_Out_Init(RCC_AHB1Periph_GPIOF, GPIOF, GPIO_Pin_10, DISABLE);
-	//Uasrt1_Init();
-	//Tim14_PWM_Init();
-	//Tim13_InputCapture_Init();
+	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+	
+	uint32_t fre = 0;
+	
 	Uasrt1_Init();
-	GPIO_Out_Init(RCC_AHB1Periph_GPIOF, GPIOF, GPIO_Pin_9, DISABLE);
-	printf("test\r\n");
+	
+	//Tim14_PWM_Init();
+	//GPIO_Out_Init(RCC_AHB1Periph_GPIOF, GPIOF, GPIO_Pin_9, DISABLE);
+	//Tim13_InputCapture_Init();
+	//Wave_Init();
+	//Tim3_CH2_PWM_Init();
+	Wave_Init();
+	Tim13_InputCapture_Init();
+	
 	while(1)
 	{
-		
-		
+//		fre = Get_Frequence();
+//		
+//		printf("Frequence: %d\r\n", fre);
+		//Breath_Light();
+		Input_Capture_test();
 	}
 }

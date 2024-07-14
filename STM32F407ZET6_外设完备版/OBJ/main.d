@@ -40,3 +40,4 @@
 ..\obj\main.o: ..\HARDWARE\Gpio\Gpio.h
 ..\obj\main.o: ..\SYSTEM\Tim\Tim.h
 ..\obj\main.o: ..\HARDWARE\Uasrt_Send_String\Uasrt_Send_String.h
+..\obj\main.o: ..\HARDWARE\Wave\Wave.h

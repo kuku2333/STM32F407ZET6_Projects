@@ -48,7 +48,7 @@ void SDA_Pin_Mode(GPIOMode_TypeDef pin_mode);
 void IIC_Start(void);
 void IIC_Stop(void);
 uint8_t IIC_Wait_Slave_Ack(void);
-void IIC_Send_Ack(uint8_t ack);
+void IIC_SendAck(uint8_t ack);
 void IIC_Send_Byte(uint8_t byte);
 uint8_t IIC_Recv_Byte(void);
 int32_t AT24C02_Write(uint8_t word_addr, uint8_t *buf, uint8_t len);
