@@ -6,7 +6,7 @@
    * @date    2024-07-14
    * @brief   IIC³õÊ¼»¯ÅäÖÃ
    ******************************************************************************
-   * 
+   * PD7-->Camera6-->SDA, PD6-->Camera4-->CLK
    ******************************************************************************
 **/
 
@@ -21,9 +21,9 @@
  *	MACRO
  *********************/
  
-#define SDA_W(x)	GPIO_WriteBit(GPIOB,GPIO_Pin_9,(x))
-#define SDA_R		GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_9)
-#define SCL_W(x)	GPIO_WriteBit(GPIOB,GPIO_Pin_8,(x))
+#define SDA_W(x)	GPIO_WriteBit(GPIOD,GPIO_Pin_7,(x))
+#define SDA_R		GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_7)
+#define SCL_W(x)	GPIO_WriteBit(GPIOD,GPIO_Pin_6,(x))
 
 /*********************
  *	MACRO

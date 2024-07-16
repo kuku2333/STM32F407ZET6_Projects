@@ -14,15 +14,15 @@ void IIC_Init(void)
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	
 	/* 使能硬件时钟:端口硬件时钟 */
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);	
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);	
 	
 	/* PB8 PB9初始化为开漏输出模式 */
 	GPIO_InitStructure.GPIO_Mode 	= 	GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_Speed 	= 	GPIO_Speed_100MHz;
 	GPIO_InitStructure.GPIO_OType 	= 	GPIO_OType_OD;
 	GPIO_InitStructure.GPIO_PuPd 	= 	GPIO_PuPd_NOPULL;
-	GPIO_InitStructure.GPIO_Pin 	= 	GPIO_Pin_8 | GPIO_Pin_9;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);	
+	GPIO_InitStructure.GPIO_Pin 	= 	GPIO_Pin_6 | GPIO_Pin_7;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);	
 	
 	/*	先都拉低，为后续的操作给一个初始状态*/
 	SDA_W(Bit_SET);
@@ -38,8 +38,8 @@ void SDA_Pin_Mode(GPIOMode_TypeDef pin_mode)
 	GPIO_InitStructure.GPIO_Speed 	= GPIO_Speed_100MHz;
 	GPIO_InitStructure.GPIO_OType 	= GPIO_OType_OD;
 	GPIO_InitStructure.GPIO_PuPd 	= GPIO_PuPd_NOPULL;
-	GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_9;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);	
+	GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_7;
+	GPIO_Init(GPIOD, &GPIO_InitStructure);	
 }
 
 void IIC_Start(void)
@@ -72,10 +72,11 @@ void IIC_Stop(void)
 		手册描述：当SCL为高电平时SDA的上山沿（低到高）
 		叫做起始条件。
 	*/
-	SDA_W(Bit_RESET);//数据线低
+	SDA_W(Bit_SET);//数据线低
 	SCL_W(Bit_SET);//时钟线高
 	Delay_us(5);
 	
+	SCL_W(Bit_SET);
 	SDA_W(Bit_SET);//数据线高
 	Delay_us(5);
 	
@@ -84,7 +85,8 @@ void IIC_Stop(void)
 
 uint8_t IIC_Wait_Slave_Ack(void)
 {
-	uint8_t ack;
+	//uint8_t ack;
+	uint8_t ucErrTime=0;
 	
 	SDA_Pin_Mode(GPIO_Mode_IN);//确保SDA引脚为输入模式
 	
@@ -98,24 +100,39 @@ uint8_t IIC_Wait_Slave_Ack(void)
 		2.拉高时钟线，告诉采集方当前SDA引脚的电平是可靠的，
 		可以读取访问
 	*/
+	SDA_W(Bit_SET);
+	Delay_us(5);
+	
 	SCL_W(Bit_SET);
 	Delay_us(5);
 	
-	//读取SDA引脚的电平
-	if(SDA_R)
-		ack=1;//无应答
-	else
-		ack=0;//有应答
+//	//读取SDA引脚的电平
+//	if(SDA_R)
+//		ack=1;//无应答
+//	else
+//		ack=0;//有应答
+	
+	while(SDA_R)
+	{
+		ucErrTime++;
+		if(ucErrTime>250)
+		{
+			IIC_Stop();
+			return 1;
+		}
+	}
 	
 	//拉低时钟线
 	SCL_W(Bit_RESET);
 	Delay_us(5);	
 		
-	return ack;
+	return 0;
 }
 
 void IIC_Send_Ack(uint8_t ack)
 {
+	SCL_W(Bit_RESET);
+	
 	SDA_Pin_Mode(GPIO_Mode_OUT);//确保SDA引脚为输出模式
 
 	/*	
@@ -123,18 +140,22 @@ void IIC_Send_Ack(uint8_t ack)
 		但根据时序图，置高合理点，数据线必须先置低，
 		然后发送应答
 	*/
-	SCL_W(Bit_SET);/*这是为了在发送应答信号之前暂停时钟
-					数据交换只允许发生在时钟线为低的时候*/
-	SDA_W(Bit_RESET);//这是为了确保在发送应答信号之前，数据线是低电平
-	Delay_us(5);
+//	SCL_W(Bit_SET);/*这是为了在发送应答信号之前暂停时钟
+//					数据交换只允许发生在时钟线为低的时候*/
+//	SDA_W(Bit_RESET);//这是为了确保在发送应答信号之前，数据线是低电平
+//	Delay_us(5);
+//	
+//	SCL_W(Bit_SET);
+//	Delay_us(5);
+//	SCL_W(Bit_RESET);
 	
 	if(ack)
 	{
-		SDA_W(Bit_SET);
+		SDA_W(Bit_SET);//不应答
 	}
 	else
 	{
-		SDA_W(Bit_RESET);
+		SDA_W(Bit_RESET);//应答
 	}
 	Delay_us(5);
 	
@@ -177,25 +198,41 @@ uint8_t IIC_Recv_Byte(void)
 	
 	SDA_Pin_Mode(GPIO_Mode_IN);
 	
-	SCL_W(Bit_RESET);
-	Delay_us(5);
+//	SCL_W(Bit_RESET);
+//	Delay_us(5);
 	
-	for(int32_t i = 7; i >= 0; i--)
-	{
-		SCL_W(Bit_SET);
-		Delay_us(5);
+//	for(int32_t i = 7; i >= 0; i--)
+//	{
+//		SCL_W(Bit_RESET);
+//		Delay_us(5);
+//		SCL_W(Bit_SET);
+//		Delay_us(5);
 
-		if(SDA_R)
-		{
-			data |= (0x01 << i); 
-		}
-		Delay_us(5);
-			
-		SCL_W(Bit_RESET);
-		Delay_us(5);
-	}
+//		if(SDA_R)
+//		{
+//			data |= (0x01 << i); 
+//		}
+//		Delay_us(5);
+//			
+//		SCL_W(Bit_RESET);
+//		Delay_us(5);
+//	}
+//	
+//	IIC_Send_Ack(0);
 	
-	IIC_Send_Ack(0);
+	for(int32_t i=0;i<8;i++ )
+	{
+        SCL_W(Bit_RESET);
+        Delay_us(5);
+		SCL_W(Bit_SET);
+        data<<=1;
+        if(SDA_R)data++;   
+		Delay_us(5); 
+    }					 
+//    if (!ack)
+//        IIC_NAck();//发送nACK
+//    else
+//        IIC_Ack(); //发送ACK
 	
 	return data;
 }

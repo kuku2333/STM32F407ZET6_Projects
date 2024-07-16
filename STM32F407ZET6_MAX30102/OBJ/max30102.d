@@ -1,5 +1,6 @@
 ..\obj\max30102.o: ..\HARDWARE\MAX30102\MAX30102.c
 ..\obj\max30102.o: ..\HARDWARE\MAX30102\MAX30102.h
+..\obj\max30102.o: ..\SYSTEM\sys\sys.h
 ..\obj\max30102.o: ..\SYSTEM\stm32f4xx.h
 ..\obj\max30102.o: ..\CMSIS\core_cm4.h
 ..\obj\max30102.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -35,6 +36,6 @@
 ..\obj\max30102.o: ..\DEVICE_LIB\inc\stm32f4xx_dac.h
 ..\obj\max30102.o: ..\DEVICE_LIB\inc\stm32f4xx_dcmi.h
 ..\obj\max30102.o: ..\DEVICE_LIB\inc\stm32f4xx_fsmc.h
+..\obj\max30102.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\max30102.o: ..\HARDWARE\IIC\IIC_xzdtx.h
 ..\obj\max30102.o: ..\SYSTEM\Delay\Delay.h
-..\obj\max30102.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

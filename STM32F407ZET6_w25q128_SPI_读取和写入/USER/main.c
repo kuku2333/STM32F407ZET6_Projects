@@ -73,7 +73,7 @@ void USART1_Config(u32 baud)
 	
 	//选择GPIO引脚的复用功能
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9 , GPIO_AF_USART1);
-  GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1);
 	
 	//配置GPIO引脚 注意：复用模式
 	GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_AF;

@@ -1,31 +1,17 @@
-/**
-   ******************************************************************************
-   * @file    STM32F407ZET6_MAX30102\HARDWARE\MAX30102.h 
-   * @author  xzdtx2333@outlook.com
-   * @version V1.0.0
-   * @date    2024-07-14
-   * @brief   使用MAX30102测量心率和血氧度
-   ******************************************************************************
-   * 
-   ******************************************************************************
-**/
+#ifndef __MYIIC_H
+#define __MYIIC_H
+////////////////////////////////////////////////////////////////////////////////// 	  
 
-#ifndef __MAX30102_H
-#define __MAX30102_H
-
-#include "stm32f4xx.h"                  // Device header
+#include "sys.h"
 #include "IIC_xzdtx.h"
+#include "Delay.h"
 
-/*********************
- *	MACRO
- *********************/
-
-#define MAX30102_INT PEin(6)
+#define MAX30102_INT PCin(6)
 
 #define I2C_WR	0		/* 写控制bit */
 #define I2C_RD	1		/* 读控制bit */
 
-#define MAX30102_WR_ADDRESS 0xAE
+#define max30102_WR_address 0xAE
 
 #define I2C_WRITE_ADDR 0xAE
 #define I2C_READ_ADDR 0xAF
@@ -54,36 +40,18 @@
 #define REG_REV_ID 0xFE
 #define REG_PART_ID 0xFF
 
-/*********************
- *	MACRO
- *********************/
+void max30102_init(void);  
+void max30102_reset(void);
+u8 max30102_Bus_Write(u8 Register_Address, u8 Word_Data);
+u8 max30102_Bus_Read(u8 Register_Address);
+void max30102_FIFO_ReadWords(u8 Register_Address,u16  Word_Data[][2],u8 count);
+void max30102_FIFO_ReadBytes(u8 Register_Address,u8* Data);
 
-/*********************
- *	GLOBAL VALUE
- *********************/
-
-
-
-/*********************
- *	GLOBAL VALUE
- *********************/
-
-/*********************
- *	FUNCTION
- *********************/
- 
-void Maxim_MAX30102_Read_FIFO(uint32_t *pun_red_led, uint32_t *pun_ir_led);
-uint8_t MAX30102_Bus_Write(uint8_t register_address, uint8_t word_data);
-uint8_t MAX30102_Bus_Read(uint8_t register_address);
-void MAX30102_FIFO_Read_Words(uint8_t register_address,uint16_t word_data[][2],uint8_t count);
-void MAX30102_FIFO_Read_Bytes(uint8_t register_address, uint8_t *data);
-void MAX30102_Init(void);
-void MAX30102_Reset(void);
-void Maxim_MAX30102_Write_REG(uint8_t uch_addr, uint8_t uch_data);
-void Maxim_MAX30102_Read_REG(uint8_t uch_addr, uint8_t *puch_data);
-						
- /*********************
- *	FUNCTION
- *********************/
-
+void maxim_max30102_write_reg(uint8_t uch_addr, uint8_t uch_data);
+void maxim_max30102_read_reg(uint8_t uch_addr, uint8_t *puch_data);
+void maxim_max30102_read_fifo(uint32_t *pun_red_led, uint32_t *pun_ir_led);
 #endif
+
+
+
+
