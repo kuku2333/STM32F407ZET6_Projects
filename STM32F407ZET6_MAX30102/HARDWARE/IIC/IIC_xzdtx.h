@@ -6,7 +6,7 @@
    * @date    2024-07-14
    * @brief   IIC初始化配置
    ******************************************************************************
-   * PD7-->Camera6-->SDA, PD6-->Camera4-->CLK
+   * PD7-->Camera6-->SDA, PD6-->Camera4-->CLK	记得改端口
    ******************************************************************************
 **/
 
@@ -24,6 +24,8 @@
 #define SDA_W(x)	GPIO_WriteBit(GPIOD,GPIO_Pin_7,(x))
 #define SDA_R		GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_7)
 #define SCL_W(x)	GPIO_WriteBit(GPIOD,GPIO_Pin_6,(x))
+
+#define DELAY_TIME 	5
 
 /*********************
  *	MACRO
@@ -50,12 +52,11 @@ void IIC_Stop(void);
 uint8_t IIC_Wait_Slave_Ack(void);
 void IIC_Send_Ack(uint8_t ack);
 void IIC_Send_Byte(uint8_t byte);
-uint8_t IIC_Recv_Byte(void);
+uint8_t IIC_Read_Byte(uint8_t ack);
 void IIC_Read_One_Byte(uint8_t daddr, uint8_t addr, uint8_t *data);
 void IIC_Write_One_Byte(uint8_t daddr,uint8_t addr,uint8_t data);
 void IIC_Write_Bytes(uint8_t write_addr, uint8_t *data, uint8_t data_Length);
 void IIC_Read_Bytes(uint8_t device_addr, uint8_t write_addr, uint8_t *data, uint8_t data_length);
-
 
  /*********************
  *	FUNCTION

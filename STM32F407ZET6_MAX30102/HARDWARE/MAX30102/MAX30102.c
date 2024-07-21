@@ -43,12 +43,9 @@ cmd_fail: /* 命令执行失败后，切记发送停止信号，避免影响I2C总线上其他设备 */
 	return 0;
 }
 
-
-
 u8 max30102_Bus_Read(u8 Register_Address)
 {
 	u8  data;
-
 
 	/* 第1步：发起I2C总线启动信号 */
 	IIC_Start();
@@ -84,10 +81,10 @@ u8 max30102_Bus_Read(u8 Register_Address)
 
 	/* 第9步：读取数据 */
 	{
-		data = IIC_Recv_Byte();	/* 读1个字节 */
+		data = IIC_Read_Byte(1);	/* 读1个字节 */
 
 		//IIC_NAck();	/* 最后1个字节读完后，CPU产生NACK信号(驱动SDA = 1) */
-		IIC_Send_Ack(1);
+		//IIC_Send_Ack(1);
 	}
 	/* 发送I2C总线停止信号 */
 	IIC_Stop();
@@ -124,7 +121,6 @@ void max30102_FIFO_ReadWords(u8 Register_Address,u16 Word_Data[][2],u8 count)
 		goto cmd_fail;	/* EEPROM器件无应答 */
 	}
 	
-
 	/* 第6步：重新启动I2C总线。下面开始读取数据 */
 	IIC_Start();
 
@@ -140,16 +136,13 @@ void max30102_FIFO_ReadWords(u8 Register_Address,u16 Word_Data[][2],u8 count)
 	/* 第9步：读取数据 */
 	while (no)
 	{
-		data1 = IIC_Recv_Byte();	
-		IIC_Send_Ack(0);
-		data2 = IIC_Recv_Byte();
-		IIC_Send_Ack(0);
+		data1 = IIC_Read_Byte(1);	
+		data2 = IIC_Read_Byte(1);
 		Word_Data[i][0] = (((u16)data1 << 8) | data2);  //
 
 		
-		data1 = IIC_Recv_Byte();	
-		IIC_Send_Ack(0);
-		data2 = IIC_Recv_Byte();
+		data1 = IIC_Read_Byte(1);	
+		data2 = IIC_Read_Byte(1);
 		if(1==no)
 			IIC_Send_Ack(1);	/* 最后1个字节读完后，CPU产生NACK信号(驱动SDA = 1) */
 		else
@@ -205,12 +198,12 @@ void max30102_FIFO_ReadBytes(u8 Register_Address,u8* Data)
 	}
 
 	/* 第9步：读取数据 */
-	Data[0] = IIC_Recv_Byte();IIC_Send_Ack(0);	
-	Data[1] = IIC_Recv_Byte();IIC_Send_Ack(0);	
-	Data[2] = IIC_Recv_Byte();IIC_Send_Ack(0);	
-	Data[3] = IIC_Recv_Byte();IIC_Send_Ack(0);
-	Data[4] = IIC_Recv_Byte();IIC_Send_Ack(0);	
-	Data[5] = IIC_Recv_Byte();IIC_Send_Ack(1);
+	Data[0] = IIC_Read_Byte(0);	
+	Data[1] = IIC_Read_Byte(0);	
+	Data[2] = IIC_Read_Byte(0);	
+	Data[3] = IIC_Read_Byte(0);
+	Data[4] = IIC_Read_Byte(0);	
+	Data[5] = IIC_Read_Byte(1);
 	/* 最后1个字节读完后，CPU产生NACK信号(驱动SDA = 1) */
 	/* 发送I2C总线停止信号 */
 	IIC_Stop();
@@ -243,7 +236,7 @@ void max30102_init(void)
 	GPIO_InitTypeDef GPIO_InitStructure;
 
  	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);		
-//	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_6;
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_6;
 //	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_IN;			//复用功能模式
 	GPIO_InitStructure.GPIO_Speed=GPIO_High_Speed;		//引脚高速工作，收到指令立即工作；缺点：功耗高

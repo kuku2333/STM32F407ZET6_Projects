@@ -401,19 +401,9 @@
               <FilePath>..\SYSTEM\Delay\Delay.c</FilePath>
             </File>
             <File>
-              <FileName>Iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SYSTEM\Iwdg\Iwdg.c</FilePath>
-            </File>
-            <File>
               <FileName>sys.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\sys\sys.c</FilePath>
-            </File>
-            <File>
-              <FileName>Tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SYSTEM\Tim\Tim.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -454,11 +444,6 @@
               <FileName>stm32f4xx_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\DEVICE_LIB\src\stm32f4xx_usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\DEVICE_LIB\src\stm32f4xx_iwdg.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_rtc.c</FileName>
@@ -505,16 +490,6 @@
         <Group>
           <GroupName>HARDWARE</GroupName>
           <Files>
-            <File>
-              <FileName>Gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\Gpio\Gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>Key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\Key\Key.c</FilePath>
-            </File>
             <File>
               <FileName>Uasrt_Send_String.c</FileName>
               <FileType>1</FileType>

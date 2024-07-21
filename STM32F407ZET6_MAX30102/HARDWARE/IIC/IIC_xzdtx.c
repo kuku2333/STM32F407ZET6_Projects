@@ -2,7 +2,7 @@
    ******************************************************************************
    * @brief		
    ******************************************************************************
-   *	
+   *	记得改端口
    ******************************************************************************
 **/
 
@@ -24,12 +24,12 @@ void IIC_Init(void)
 	GPIO_InitStructure.GPIO_Pin 	= 	GPIO_Pin_6 | GPIO_Pin_7;
 	GPIO_Init(GPIOD, &GPIO_InitStructure);	
 	
-	/*	先都拉低，为后续的操作给一个初始状态*/
+	/*	IIC协议，初始时两根线是高电平*/
 	SDA_W(Bit_SET);
 	SCL_W(Bit_SET);
 }
 
-/*	数据线需要读和写，所以需要看情况更改引脚模式*/
+/*	数据线需要收和发，所以需要看情况更改引脚模式*/
 void SDA_Pin_Mode(GPIOMode_TypeDef pin_mode)
 {
 	GPIO_InitTypeDef  GPIO_InitStructure;
@@ -42,26 +42,28 @@ void SDA_Pin_Mode(GPIOMode_TypeDef pin_mode)
 	GPIO_Init(GPIOD, &GPIO_InitStructure);	
 }
 
+/* 起始位*/
 void IIC_Start(void)
 {
-	/*	读和写的前期准备是主机发给从机，所以是输出*/
+	/*	开始是主机发给从机，所以是输出模式*/
 	SDA_Pin_Mode(GPIO_Mode_OUT);
 	
 	/*	手册描述：当SCL为高电平时SDA的下降沿（高到低）
 		叫做起始条件。
-		所以，先把两根线都置高，表示空闲状态，再让数据
-		线置低，这时时钟线还是高，就是在告诉从机开始了，
-		最后再做一个时钟线置低操作。
+		所以，先把两根线都置高，再让数据线置低，这时时
+		钟线还是高，就是在告诉从机开始了
 	*/
-	SDA_W(Bit_SET);//数据线高
+	SDA_W(Bit_SET);//数据线高,为了确保SDA高
 	SCL_W(Bit_SET);//时钟线高
-	Delay_us(5);
+	Delay_us(DELAY_TIME);//用5us好
 	
-	SDA_W(Bit_RESET);//数据线低
-	Delay_us(5);
+	SDA_W(Bit_RESET);//数据线低，时钟线高，起始位生成
+	Delay_us(DELAY_TIME);
 	
-	SCL_W(Bit_RESET);//时钟线低
-	Delay_us(5);
+	/* 时钟线低，代表数据不稳定，不能进行数据的读取
+		也就是进入数据准备阶段*/
+	SCL_W(Bit_RESET);//
+	Delay_us(DELAY_TIME);
 }
 
 void IIC_Stop(void)
@@ -69,42 +71,65 @@ void IIC_Stop(void)
 	SDA_Pin_Mode(GPIO_Mode_OUT);//确保SDA引脚为输出模式
 	
 	/*
-		手册描述：当SCL为高电平时SDA的上山沿（低到高）
+		手册描述：当SCL为高电平时SDA的上升沿（低到高）
 		叫做起始条件。
 	*/
-	SDA_W(Bit_SET);//数据线低
+	
+	/* 1.先都拉低
+	
+		按停止位的时序来看，时钟线也可以拉高，然后在下一
+		步中只拉高数据线就行了，但这样做有可能产生错误的
+		脉冲，因为数据是在时钟线为高时进行收发的，所以先
+		拉低比较好。而起始位的生成前不需要考虑这些，因为还没有
+		产生数据的收发。
+	*/
+	SDA_W(Bit_RESET);//数据线低
+	SCL_W(Bit_RESET);//时钟线低
+	Delay_us(DELAY_TIME);
+	
+	/* 2.再一起拉高*/
 	SCL_W(Bit_SET);//时钟线高
-	Delay_us(5);
-	
-	SCL_W(Bit_SET);
 	SDA_W(Bit_SET);//数据线高
-	Delay_us(5);
+	Delay_us(DELAY_TIME);
 	
-	//通信结束了，不需要再对时钟线置低
+	/*通信结束了，不需要再对时钟线置低来表示进入数据准备阶段*/
 }
 
+/*	主机接收从机的应答，IIC的应答机制是：
+	低电平代表应答，高电平代表没应答。
+*/
 uint8_t IIC_Wait_Slave_Ack(void)
 {
-	//uint8_t ack;
-	uint8_t ucErrTime=0;
-	
-	SDA_Pin_Mode(GPIO_Mode_IN);//确保SDA引脚为输入模式
-	
 	/*
 		手册描述：总线上的接收器每收到一个字节就产生
 		一个应答，主器件必须产生一个对应的额外的时钟
-		脉冲
-		1.意思是说，在接收一个字节后，时钟线要设置一个脉冲，
-		直接拉高时钟线，然后读数据线，判断从机是否应答，
-		低电平就是有应答，高电平就是没有应答
-		2.拉高时钟线，告诉采集方当前SDA引脚的电平是可靠的，
-		可以读取访问
-	*/
-	SDA_W(Bit_SET);
-	Delay_us(5);
+		脉冲。
 	
-	SCL_W(Bit_SET);
-	Delay_us(5);
+		意思是说，在接收一个字节后，时钟线要设置一个脉冲，
+		就是拉高时钟线，然后读数据线，判断从机是否应答，
+		低电平就是有应答，高电平就是没有应答。
+	*/
+	
+	uint8_t error_time = 0;
+	
+	/* 确保SDA引脚为输入模式，以接收从机的应答信号。*/
+	SDA_Pin_Mode(GPIO_Mode_IN);
+	
+	SCL_W(Bit_RESET);//时钟线低，给从机一点准备数据的时间
+	Delay_us(DELAY_TIME);
+	
+	SCL_W(Bit_SET);//时钟线高
+	Delay_us(DELAY_TIME);
+	
+	while(SDA_R)
+	{
+		error_time++;
+		if(error_time > 250)
+		{
+			IIC_Stop();
+			return 1;
+		}
+	}
 	
 //	//读取SDA引脚的电平
 //	if(SDA_R)
@@ -112,127 +137,114 @@ uint8_t IIC_Wait_Slave_Ack(void)
 //	else
 //		ack=0;//有应答
 	
-	while(SDA_R)
-	{
-		ucErrTime++;
-		if(ucErrTime>250)
-		{
-			IIC_Stop();
-			return 1;
-		}
-	}
-	
-	//拉低时钟线
+	//拉低时钟线，表示不能进行数据的收发。
 	SCL_W(Bit_RESET);
-	Delay_us(5);	
+	Delay_us(DELAY_TIME);	
 		
 	return 0;
 }
 
+/* 主机发送应答给从机*/
 void IIC_Send_Ack(uint8_t ack)
 {
+	/*	
+		先拉低时钟线，表示数据不可读写，再进入输出模式，
+		然后发送信号，最后拉低时钟线。
+	*/
+	
 	SCL_W(Bit_RESET);
 	
 	SDA_Pin_Mode(GPIO_Mode_OUT);//确保SDA引脚为输出模式
-
-	/*	
-		在发送应答前，时钟线高低都可以正常发送应答，
-		但根据时序图，置高合理点，数据线必须先置低，
-		然后发送应答
-	*/
-//	SCL_W(Bit_SET);/*这是为了在发送应答信号之前暂停时钟
-//					数据交换只允许发生在时钟线为低的时候*/
-//	SDA_W(Bit_RESET);//这是为了确保在发送应答信号之前，数据线是低电平
-//	Delay_us(5);
-//	
-//	SCL_W(Bit_SET);
-//	Delay_us(5);
-//	SCL_W(Bit_RESET);
 	
+	/* 准备发送的信号*/
 	if(ack)
 	{
-		SDA_W(Bit_SET);//不应答
+		SDA_W(Bit_SET);
 	}
 	else
 	{
-		SDA_W(Bit_RESET);//应答
+		SDA_W(Bit_RESET);
 	}
-	Delay_us(5);
+	Delay_us(DELAY_TIME);
 	
-	SCL_W(Bit_SET);//这是为了结束应答信号的发送。
-	Delay_us(5);
+	/* 时钟线拉高，从机得到信号*/
+	SCL_W(Bit_SET);
+	Delay_us(DELAY_TIME);
 	
+	/* 时钟线拉低，进入数据交换阶段，也就是表示数据不可读写。*/
 	SCL_W(Bit_RESET);//这是为了释放时钟线，准备下一次数据传输
-	Delay_us(5);	
+	Delay_us(DELAY_TIME);	
 }
 
+/* 主机发送一个字节的数据给从机，
+	先发高位，再发低位。*/
 void IIC_Send_Byte(uint8_t byte)
 {	
 	SDA_Pin_Mode(GPIO_Mode_OUT);//确保SDA引脚为输出模式
 	
-	SCL_W(Bit_RESET);//拉低，允许数据交换
-	Delay_us(5);
+	SCL_W(Bit_RESET);//拉低，进入数据准备阶段。
+	Delay_us(DELAY_TIME);
 	
-	for(int32_t i = 7; i >= 0; i--)
+	for(int8_t i = 7; i >= 0; i--)
 	{
-		//优先去设置SDA引脚的电平
-		if(byte & (1 << i))
+		/* 准备要发送的bit。*/
+		if(byte & (1 << i))//判断对应位是1还是0
 			SDA_W(Bit_SET);
 		else
 			SDA_W(Bit_RESET);
-		Delay_us(5);
+		Delay_us(DELAY_TIME);
 		
 		//拉高时钟线，告诉采集方当前SDA引脚的电平是可靠的，可以读取访问
 		SCL_W(Bit_SET);
-		Delay_us(5);
+		Delay_us(DELAY_TIME);
 	
 		//拉低时钟线，告诉采集方当前SDA引脚的电平是不可靠的，因为当前要变更SDA引脚的电平
 		SCL_W(Bit_RESET);
-		Delay_us(5);	
+		Delay_us(DELAY_TIME);	
 	}
 }
 
-uint8_t IIC_Recv_Byte(void)
+/* 主机读取从机发的一个字节的数据，IIC每收发一个
+	字节的数据，后要一个应答信号，在一连串的数据发送后，
+	要有一个非应答，然后是停止位。停止位不在本函数中使用。
+	而发送函数中，每发送一个字节也会收到从机的应答信号，所以
+	在发送后要判断从机有没有应答。*/
+uint8_t IIC_Read_Byte(uint8_t ack)
 {
 	uint8_t data = 0;
 	
 	SDA_Pin_Mode(GPIO_Mode_IN);
 	
+//	/* 确保不会有数据的收发，这句没必要，因为起始位最后已经拉低了。*/
 //	SCL_W(Bit_RESET);
-//	Delay_us(5);
+//	Delay_us(DELAY_TIME);
 	
-//	for(int32_t i = 7; i >= 0; i--)
-//	{
-//		SCL_W(Bit_RESET);
-//		Delay_us(5);
-//		SCL_W(Bit_SET);
-//		Delay_us(5);
-
-//		if(SDA_R)
-//		{
-//			data |= (0x01 << i); 
-//		}
-//		Delay_us(5);
-//			
-//		SCL_W(Bit_RESET);
-//		Delay_us(5);
-//	}
-//	
-//	IIC_Send_Ack(0);
-	
-	for(int32_t i=0;i<8;i++ )
+	/* 读一个字节的流程应该是：先拉低时钟线，准备读数据，再
+		拉高时钟线进行读数据，最后再选择发送应答信号还是非应答信号。*/
+	for(int32_t i = 7; i >= 0; i--)
 	{
-        SCL_W(Bit_RESET);
-        Delay_us(5);
+		SCL_W(Bit_RESET);
+		Delay_us(DELAY_TIME);
+		
 		SCL_W(Bit_SET);
-        data<<=1;
-        if(SDA_R)data++;   
-		Delay_us(5); 
-    }					 
-//    if (!ack)
-//        IIC_NAck();//发送nACK
-//    else
-//        IIC_Ack(); //发送ACK
+		Delay_us(DELAY_TIME);
+
+		if(SDA_R)
+		{
+			data |= (0x01 << i); 
+		}
+		Delay_us(DELAY_TIME);
+	}
+	
+	/* 1:非应答，0：应答*/
+	if(ack)
+	{
+		IIC_Send_Ack(1);
+	}
+	else
+	{
+		IIC_Send_Ack(0);
+	}
 	
 	return data;
 }
@@ -251,8 +263,7 @@ void IIC_Read_One_Byte(uint8_t daddr, uint8_t addr, uint8_t *data)
 	IIC_Send_Byte(daddr | 0X01);//进入接收模式			   
 	IIC_Wait_Slave_Ack();
 	
-    *data = IIC_Recv_Byte();
-	IIC_Send_Ack(1);
+    *data = IIC_Read_Byte(1);
 	
     IIC_Stop();//产生一个停止条件	    
 }
@@ -304,12 +315,10 @@ void IIC_Read_Bytes(uint8_t device_addr, uint8_t write_addr, uint8_t *data, uint
 	
 	for(uint8_t i = 0;i < data_length - 1; i++)
 	{
-		data[i] = IIC_Recv_Byte();
-		IIC_Send_Ack(0);
+		data[i] = IIC_Read_Byte(0);
 	}		
-	data[data_length - 1] = IIC_Recv_Byte();	
-	
-	IIC_Send_Ack(1);
+	data[data_length - 1] = IIC_Read_Byte(1);	
+
     IIC_Stop();//产生一个停止条件 
 	Delay_ms(10);	 
 }

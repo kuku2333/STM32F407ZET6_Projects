@@ -445,11 +445,6 @@
               <FileType>1</FileType>
               <FilePath>..\DEVICE_LIB\src\stm32f4xx_usart.c</FilePath>
             </File>
-            <File>
-              <FileName>stm32f4xx_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\DEVICE_LIB\src\stm32f4xx_iwdg.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -491,24 +486,9 @@
               <FilePath>..\HARDWARE\src\Key.c</FilePath>
             </File>
             <File>
-              <FileName>Tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\src\Tim.c</FilePath>
-            </File>
-            <File>
               <FileName>Uasrt_Send_String.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\src\Uasrt_Send_String.c</FilePath>
-            </File>
-            <File>
-              <FileName>Iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SYSTEM\Iwdg.c</FilePath>
-            </File>
-            <File>
-              <FileName>Gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\src\Gpio.c</FilePath>
             </File>
             <File>
               <FileName>IIC_xzdtx.c</FileName>

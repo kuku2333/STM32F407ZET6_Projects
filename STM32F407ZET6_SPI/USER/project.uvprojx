@@ -512,16 +512,6 @@
           <GroupName>HARDWARE</GroupName>
           <Files>
             <File>
-              <FileName>beep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\BEEP\beep.c</FilePath>
-            </File>
-            <File>
-              <FileName>key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\KEY\key.c</FilePath>
-            </File>
-            <File>
               <FileName>tft.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\LCD\tft.c</FilePath>

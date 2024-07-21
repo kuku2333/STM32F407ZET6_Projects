@@ -3,16 +3,18 @@
 RTC_TimeTypeDef  	RTC_TimeStructure;
 RTC_InitTypeDef  	RTC_InitStructure;
 RTC_DateTypeDef 	RTC_DateStructure;
+
 __IO uint32_t 		RTCTimeDisplay = 0;
 uint8_t 			RTCShowTime[50] = {0};
 uint8_t 			RTCShowDate[50] = {0};
 
+/*	*/
 void RTC_Calendar_Init(void)
 {
 	NVIC_InitTypeDef  NVIC_InitStructure;
 	EXTI_InitTypeDef  EXTI_InitStructure;
 	
-		/* 使能PWR时钟*/
+	/* 使能PWR时钟*/
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
 	
 	/* 使能访问RTC域*/
@@ -30,12 +32,6 @@ void RTC_Calendar_Init(void)
 	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
 	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
 	EXTI_Init(&EXTI_InitStructure);
-	
-//	/* 选择RTC时钟源*/
-//	RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);
-//	
-//	/* 使能RTC时钟*/
-//	RCC_RTCCLKCmd(ENABLE);
 	
 	RCC_LSEConfig(RCC_LSE_ON);
   
@@ -96,12 +92,9 @@ void RTC_ShowTime(void)
 			//显示时间
 			RTC_GetTime(RTC_Format_BIN, &RTC_TimeStructure);
 			RTC_GetDate(RTC_Format_BIN, &RTC_DateStructure);
-			printf("%0.2d:%0.2d:%0.2d\r\n",	RTC_TimeStructure.RTC_Hours,\ 
-											RTC_TimeStructure.RTC_Minutes, \
-											RTC_TimeStructure.RTC_Seconds);
-			printf("20%0.2d-%0.2d-%0.2d\r\n",	RTC_DateStructure.RTC_Year, \
-												RTC_DateStructure.RTC_Month,\
-												RTC_DateStructure.RTC_Date);			
+			
+			printf("%0.2d:%0.2d:%0.2d\r\n",	RTC_TimeStructure.RTC_Hours,RTC_TimeStructure.RTC_Minutes, RTC_TimeStructure.RTC_Seconds);
+			printf("20%0.2d-%0.2d-%0.2d\r\n", RTC_DateStructure.RTC_Year, RTC_DateStructure.RTC_Month,RTC_DateStructure.RTC_Date);			
 			RTCTimeDisplay = 0;
 		}	
 }

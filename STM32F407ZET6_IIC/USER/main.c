@@ -13,13 +13,8 @@
 #include "stm32f4xx.h"                  // Device header
 #include "Delay.h"
 #include "sys.h"
-#include "Gpio.h"
-#include "Tim.h"
-#include "AT24C02.h"
 #include "Uasrt_Send_String.h"
-#include <stdio.h>
-
-extern uint32_t g_cap_val;
+#include "IIC_xzdtx.h"
 
 int main(void)
 {	
