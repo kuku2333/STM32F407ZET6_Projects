@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>3</Optim>
+            <Optim>1</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F40_41xxx,LV_LVGL_H_INCLUDE_SIMPLE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\DEVICE_LIB\inc;..\CMSIS;..\SYSTEM;..\USER;..\SYSTEM\Delay;..\SYSTEM\sys;..\HARDWARE\Uasrt_Send_String;..\LVGL;..\LVGL\src;..\LVGL\examples\porting;..\LVGL\demos\widgets;..\HARDWARE\LCD;..\HARDWARE\TIM</IncludePath>
+              <IncludePath>..\DEVICE_LIB\inc;..\CMSIS;..\SYSTEM;..\USER;..\SYSTEM\Delay;..\SYSTEM\sys;..\LVGL;..\LVGL\src;..\LVGL\examples\porting;..\LVGL\demos\widgets;..\HARDWARE\LCD;..\HARDWARE\TIM;..\HARDWARE\uasrt</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -455,6 +455,16 @@
               <FileType>1</FileType>
               <FilePath>..\DEVICE_LIB\src\stm32f4xx_fsmc.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f4xx_dcmi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DEVICE_LIB\src\stm32f4xx_dcmi.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\DEVICE_LIB\src\stm32f4xx_spi.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -491,11 +501,6 @@
           <GroupName>HARDWARE</GroupName>
           <Files>
             <File>
-              <FileName>Uasrt_Send_String.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\Uasrt_Send_String\Uasrt_Send_String.c</FilePath>
-            </File>
-            <File>
               <FileName>tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\TIM\tim.c</FilePath>
@@ -509,6 +514,11 @@
               <FileName>touch.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\LCD\touch.c</FilePath>
+            </File>
+            <File>
+              <FileName>uasrt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\uasrt\uasrt.c</FilePath>
             </File>
           </Files>
         </Group>

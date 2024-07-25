@@ -1,4 +1,5 @@
 #include "Tim.h"
+#include "sys.h"
 
 /**
   * @brief 用定时器输出脉冲波
@@ -30,30 +31,38 @@ void Tim14_Init()
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
     GPIO_Init(GPIOF, &GPIO_InitStructure);//初始化
 	
-	GPIO_PinAFConfig(GPIOF, GPIO_PinSource9, GPIO_AF_TIM14);//引脚映射到定时器
+	//test
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;//引脚9
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;//复用模式
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);//初始化
 	
-	/*定时器14在APB1上，2倍频后，是84MHZ。下面的结构体中TIM_Prescaler（预分频值）和
-	TIM_Period（周期值）是最关键的，84MHZ经过8400分频后，成了1KHZ。
-	1HZ的意思是在1s内的频率为1，1/f=t，周期就是时间。也就是说，1/1HZ对应
-	1s，那么1/1000HZ=1ms。那么现在就是计数器每记一次数，就过了1ms，所以将计数器的值
-	设置成100，就过了100ms。此处需要定时100ms，来当作输出比较的一个周期*/
-	TIM_TimeBaseStructure.TIM_Prescaler			=	84000 - 1;
-	TIM_TimeBaseStructure.TIM_Period			=	100 -  1;
-	TIM_TimeBaseStructure.TIM_CounterMode		=	TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIM14, &TIM_TimeBaseStructure);
-	
-	/* Output Compare Toggle Mode configuration: Channel1 */
-    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;//选择PWM1模式，
-    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-    TIM_OCInitStructure.TIM_Pulse = 30;
-    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
-    TIM_OC1Init(TIM14, &TIM_OCInitStructure);
+//	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_TIM14);//引脚映射到定时器
+//	
+//	/*定时器14在APB1上，2倍频后，是84MHZ。下面的结构体中TIM_Prescaler（预分频值）和
+//	TIM_Period（周期值）是最关键的，84MHZ经过8400分频后，成了1KHZ。
+//	1HZ的意思是在1s内的频率为1，1/f=t，周期就是时间。也就是说，1/1HZ对应
+//	1s，那么1/1000HZ=1ms。那么现在就是计数器每记一次数，就过了1ms，所以将计数器的值
+//	设置成100，就过了100ms。此处需要定时100ms，来当作输出比较的一个周期*/
+//	TIM_TimeBaseStructure.TIM_Prescaler			=	84000 - 1;
+//	TIM_TimeBaseStructure.TIM_Period			=	100 -  1;
+//	TIM_TimeBaseStructure.TIM_CounterMode		=	TIM_CounterMode_Up;
+//	TIM_TimeBaseInit(TIM14, &TIM_TimeBaseStructure);
+//	
+//	/* Output Compare Toggle Mode configuration: Channel1 */
+//    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;//选择PWM1模式，
+//    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+//    TIM_OCInitStructure.TIM_Pulse = 30;
+//    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
+//    TIM_OC1Init(TIM14, &TIM_OCInitStructure);
 
-	/*Enables or disables the TIMx peripheral Preload register on CCR2.
-	使能或者失能TIMx外设周期寄存器在CCR2上，在配置脉冲波时，这个函数是强制使用的*/
-	TIM_OC2PreloadConfig(TIM14, TIM_OCPreload_Disable);
-	
-	TIM_Cmd(TIM14, ENABLE);//使能定时器
+//	/*Enables or disables the TIMx peripheral Preload register on CCR2.
+//	使能或者失能TIMx外设周期寄存器在CCR2上，在配置脉冲波时，这个函数是强制使用的*/
+//	TIM_OC2PreloadConfig(TIM14, TIM_OCPreload_Disable);
+//	
+//	TIM_Cmd(TIM14, ENABLE);//使能定时器
 }
 
 

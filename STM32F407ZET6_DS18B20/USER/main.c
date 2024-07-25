@@ -23,13 +23,12 @@ int main(void)
 	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 	
 	Uasrt1_Init();
-	GPIO_Out_Init(RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_6, DISABLE);
+	GPIO_Out_Init(RCC_AHB1Periph_GPIOB, GPIOB, GPIO_Pin_6, DISABLE);
 	
 	test();
 	
 	while(1)
 	{
-		
-		
+//		test();
 	}
 }

@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F40_41xxx</Define>
               <Undefine></Undefine>
-              <IncludePath>..\DEVICE_LIB\inc;..\CMSIS;..\SYSTEM;..\USER;..\HARDWARE\inc</IncludePath>
+              <IncludePath>..\DEVICE_LIB\inc;..\CMSIS;..\SYSTEM;..\USER;..\HARDWARE\inc;..\SYSTEM\sys</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -399,6 +399,11 @@
               <FileName>Delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\Delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\sys\sys.c</FilePath>
             </File>
           </Files>
         </Group>

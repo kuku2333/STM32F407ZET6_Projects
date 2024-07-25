@@ -6,7 +6,7 @@
    * @date    2024-07-12
    * @brief   
    ******************************************************************************
-   * 
+   * Camera13-->PB6
    ******************************************************************************
 **/
 
@@ -19,12 +19,12 @@
 #include "Gpio.h"
 #include "Uasrt_Send_String.h"
 
-#define GPIO_Mode_In()	GPIO_In_Init(RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_6, ENABLE);
-#define GPIO_Mode_Out() GPIO_Out_Init(RCC_AHB1Periph_GPIOD, GPIOD, GPIO_Pin_6, ENABLE);
+#define GPIO_Mode_In()	GPIO_In_Init(RCC_AHB1Periph_GPIOB, GPIOD, GPIO_Pin_6, ENABLE);
+#define GPIO_Mode_Out() GPIO_Out_Init(RCC_AHB1Periph_GPIOB, GPIOD, GPIO_Pin_6, ENABLE);
 
-#define DS18B20_DQ_In		PDin(6)
-#define DS18B20_DQ_SET		PDout(6) = 1
-#define DS18B20_DQ_RESET	PDout(6) = 0
+#define DS18B20_DQ_In		PBin(6)
+#define DS18B20_DQ_SET		PBout(6) = 1
+#define DS18B20_DQ_RESET	PBout(6) = 0
 
 uint8_t DS18B20_Master_Read_Byte(void);
 uint8_t DS18B20_Master_Read_Slot(void);

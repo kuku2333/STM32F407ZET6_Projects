@@ -6,7 +6,7 @@
 #include "IIC_xzdtx.h"
 #include "Delay.h"
 
-#define MAX30102_INT PCin(6)
+#define MAX30102_INT PGin(15)
 
 #define I2C_WR	0		/* Ð´¿ØÖÆbit */
 #define I2C_RD	1		/* ¶Á¿ØÖÆbit */
@@ -40,16 +40,16 @@
 #define REG_REV_ID 0xFE
 #define REG_PART_ID 0xFF
 
-void max30102_init(void);  
-void max30102_reset(void);
-u8 max30102_Bus_Write(u8 Register_Address, u8 Word_Data);
-u8 max30102_Bus_Read(u8 Register_Address);
-void max30102_FIFO_ReadWords(u8 Register_Address,u16  Word_Data[][2],u8 count);
-void max30102_FIFO_ReadBytes(u8 Register_Address,u8* Data);
+void maxim_max30102_read_fifo(I2C_Port_t *port, uint32_t *pun_red_led, uint32_t *pun_ir_led);
+void maxim_max30102_read_reg(I2C_Port_t *port, uint8_t uch_addr, uint8_t *puch_data);
+void maxim_max30102_write_reg(I2C_Port_t *port, uint8_t uch_addr, uint8_t uch_data);
+void max30102_reset(I2C_Port_t *port);
+void max30102_init(I2C_Port_t *port);
+void max30102_FIFO_ReadBytes(I2C_Port_t *port, u8 Register_Address,u8* Data);
+void max30102_FIFO_ReadWords(I2C_Port_t *port, u8 Register_Address,u16 Word_Data[][2],u8 count);
+u8 max30102_Bus_Read(I2C_Port_t *port, u8 Register_Address);
+u8 max30102_Bus_Write(I2C_Port_t *port, u8 Register_Address, u8 Word_Data);
 
-void maxim_max30102_write_reg(uint8_t uch_addr, uint8_t uch_data);
-void maxim_max30102_read_reg(uint8_t uch_addr, uint8_t *puch_data);
-void maxim_max30102_read_fifo(uint32_t *pun_red_led, uint32_t *pun_ir_led);
 #endif
 
 

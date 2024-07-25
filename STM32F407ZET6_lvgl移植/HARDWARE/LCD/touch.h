@@ -23,6 +23,13 @@
  *	MACRO
  *********************/
  
+#define TP_PIN_DEF_1 1
+#define TP_PIN_DEF_2 2
+
+#define TP_PIN_DEF   TP_PIN_DEF_2
+
+#if TP_PIN_DEF == TP_PIN_DEF_1
+
  //与触摸屏芯片连接引脚	   
 #define TP_SCL_W	PDout(0)
 #define TP_SDA_W	PDout(14)
@@ -30,8 +37,22 @@
 #define TP_RST		PDout(4)
 #define TP_IRQ		PFin(12)
 
+#endif 
+
+#if TP_PIN_DEF == TP_PIN_DEF_2
+
+//与触摸屏芯片连接引脚	   
+#define TP_SCL_W	PDout(6)
+#define TP_SDA_W	PDout(7)
+#define TP_SDA_R	PDin(7)
+#define TP_RST		PCout(6)
+#define TP_IRQ		PCin(8)
+
+#endif 
+
 #define DELAY_TIME 	5
 
+#define IIC_TIME_QU 1
 /*********************
  *	MACRO
  *********************/
@@ -41,10 +62,11 @@
  *********************/
 
 extern uint16_t g_tp_x,g_tp_y;
+extern volatile uint32_t g_tp_event;
 
-extern uint32_t g_lcd_width;
-extern uint32_t g_lcd_height;
-extern uint32_t g_lcd_direction;
+//extern uint32_t g_lcd_width;
+//extern uint32_t g_lcd_height;
+//extern uint32_t g_lcd_direction;
 
 /*********************
  *	GLOBAL VALUE

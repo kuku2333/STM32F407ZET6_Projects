@@ -38,7 +38,7 @@ int main(void)
 	lcd_clear(WHITE);	
 	
 	/* 显示方向， 竖屏 */
-	lcd_set_direction(2);
+	lcd_set_direction(0);
 	
 	
 	tp_init();
@@ -48,42 +48,46 @@ int main(void)
 	
 	while (1)
 	{
-		/* 检测是否有按下 */
-		if(TP_IRQ==0)
-		{
-			/* 持续访问 */
-			while(1)
-			{
-				/* 获取点击的坐标值 */
-				if(tp_sta=tp_read(&tp_x,&tp_y))
-				{
-					/* 显示描点 */
-					lcd_fill(tp_x,tp_y,5,5,RED);
-					
-					/* 清除上次的坐标值显示区域 */
-					lcd_fill(20,g_lcd_height-20,160,20,BLUE);
-					
-					/* 显示坐标值 */
-					sprintf(buf,"x=%d y=%d sta=%d",tp_x,tp_y,tp_sta);
-					lcd_show_string(20,g_lcd_height-20,buf,WHITE,BLUE,16,0);
-					
-				}		
+//		/* 检测是否有按下 */
+//		if(TP_IRQ==0)
+//		{
+//			/* 持续访问 */
+//			while(1)
+//			{
+//				/* 获取点击的坐标值 */
+//				if(tp_sta=tp_read(&tp_x,&tp_y))
+//				{
+//					/* 显示描点 */
+//					lcd_fill(tp_x,tp_y,5,5,RED);
+//					
+//					/* 清除上次的坐标值显示区域 */
+//					lcd_fill(20,g_lcd_height-20,160,20,BLUE);
+//					
+//					/* 显示坐标值 */
+//					sprintf(buf,"x=%d y=%d sta=%d",tp_x,tp_y,tp_sta);
+//					lcd_show_string(20,g_lcd_height-20,buf,WHITE,BLUE,16,0);
+//					
+//				}		
 
-				tp_recv_byte(0x02,&tp_finger_num);
-				
-				if(tp_finger_num == 0)
-					break;				
+//				tp_recv_byte(0x02,&tp_finger_num);
+//				
+//				if(tp_finger_num == 0)
+//					break;				
 
-				Delay_ms(10);
-			}
-			
-			Delay_ms(2000);
-			
-			/* 清屏 */
-			lcd_fill(0,0,g_lcd_width,g_lcd_height,WHITE);
-			
-			/* 显示标题 */
-			lcd_show_string(30,140,"TP Test By Teacher.Wen",RED,WHITE,16,0);
-		}		
+//				Delay_ms(10);
+//			}
+//			
+//			Delay_ms(2000);
+//			
+//			/* 清屏 */
+//			lcd_fill(0,0,g_lcd_width,g_lcd_height,WHITE);
+//			
+//			/* 显示标题 */
+//			lcd_show_string(30,140,"TP Test By Teacher.Wen",RED,WHITE,16,0);
+//		}	
+		PBout(7) = 0;
+		Delay_ms(50);
+		PBout(7) = 1;
+		Delay_ms(50);
 	}
 }

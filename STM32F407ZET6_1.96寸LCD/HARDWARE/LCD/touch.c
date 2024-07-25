@@ -192,6 +192,13 @@ void tp_lowlevel_init(void)
 	GPIO_InitStructure.GPIO_Speed=GPIO_Speed_100MHz;
 	GPIO_Init(GPIOF , &GPIO_InitStructure);
 	
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_7;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_Speed=GPIO_Speed_100MHz;
+	GPIO_Init(GPIOB , &GPIO_InitStructure);
+	
 	//≥ı ºªØ
 	TP_RST=1;
 }

@@ -30,13 +30,17 @@
 #define X_OFFSET	20
 #define Y_OFFSET	20
 
-//#define LCD_SOFT_SPI_ENABLE  1
+#define LCD_SOFT_SPI_ENABLE  0
+
+#define LCD_DMA_ENABLE		 1
 
 #define RED 	0XF800   	// 红色
 #define GREEN 	0X07E0 		// 绿色
 #define BLUE 	0X001F  	// 蓝色
 #define WHITE 	0XFFFF 		// 白色
 #define BLACK 	0X0000 		// 黑色
+
+#if LCD_SOFT_SPI_ENABLE
 
 #define SPI_CS_0 	PEout(13) = 0
 #define SPI_CS_1 	PEout(13) = 1
@@ -55,6 +59,28 @@
 
 #define LCD_BLK_0 	PDout(9) = 0
 #define LCD_BLK_1 	PDout(9) = 1
+
+#else
+
+#define SPI_CS_0 PGout(6) = 0
+#define SPI_CS_1 PGout(6) = 1
+
+#define SPI_SCK_0 PBout(15) = 0
+#define SPI_SCK_1 PBout(15) = 1
+
+#define SPI_SDA_0 PDout(10) = 0
+#define SPI_SDA_1 PDout(10) = 1
+
+#define LCD_RST_0 PGout(8) = 0
+#define LCD_RST_1 PGout(8) = 1
+
+#define LCD_DC_0 PGout(7) = 0
+#define LCD_DC_1 PGout(7) = 1
+
+#define LCD_BLK_0 PBout(4) = 0
+#define LCD_BLK_1 PBout(4) = 1
+
+#endif
 
 /*********************
  *	MACRO

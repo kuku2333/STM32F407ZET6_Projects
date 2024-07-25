@@ -20,7 +20,7 @@
 //#include "ui.h"
 //#include "ui_helpers.h"
 //#include "RTC.h"
-#include "Uasrt_Send_String.h"
+#include "uasrt.h"
 
 extern GPIO_InitTypeDef  	GPIO_InitStructure;
 extern NVIC_InitTypeDef 	NVIC_InitStructure;		

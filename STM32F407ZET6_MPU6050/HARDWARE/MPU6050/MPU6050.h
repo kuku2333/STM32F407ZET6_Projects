@@ -17,7 +17,6 @@
 #include "sys.h"
 #include "IIC_xzdtx.h"
 #include "Delay.h"
-#include "mpu6050.h"
 
 /*********************
  *	MACRO

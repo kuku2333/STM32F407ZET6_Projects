@@ -27,6 +27,12 @@
 
 #define DELAY_TIME 	5 //延时时间，单位us
 
+#define TOUCH_IIC_SCK_PIN					TOUCH_GPIO_Port,TOUCH_GPIO_Pin
+
+#define IIC_Digital_WRITE(_pin, _value) 	GPIO_WriteBit(_pin, _value == 0 ? Bit_RESET : Bit_SET)
+#define IIC_Digital_READ(_pin) 				GPIO_ReadInputDataBit(_pin)
+#define IIC_CLOCK_WRITE(_pin, _value)		GPIO_WriteBit(_pin, _value == 0 ? Bit_RESET : Bit_SET)
+
 /*********************
  *	MACRO
  *********************/

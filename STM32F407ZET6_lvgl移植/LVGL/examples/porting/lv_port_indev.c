@@ -13,7 +13,8 @@
 #include "../../lvgl.h"
 #include "touch.h"
 #include "tft.h"
-
+#include <stdio.h>
+#include <string.h>
 /*********************
  *      DEFINES
  *********************/
@@ -187,7 +188,7 @@ void lv_port_indev_init(void)
 static void touchpad_init(void)
 {
     /*Your code comes here*/
-	tp_init();
+	tp_init(); 
 }
 
 /*Will be called by the library to read the touchpad*/
@@ -214,22 +215,74 @@ static void touchpad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 static bool touchpad_is_pressed(void)
 {
     /*Your code comes here*/
-	if (TP_SDA_R)
-		return false;
-	return true;
+//	uint16_t tp_x, tp_y;
+//	
+//	if (TP_IRQ)
+//	{
+////		tp_read(&tp_x, &tp_y);
+////		printf("x:%d,y:%d\r\n",tp_x,tp_y);
+////		Delay_ms(500);
+//		return false;
+//	}
+//	else
+//	{
+//		tp_read(&tp_x, &tp_y);
+//		printf("press:x:%d,y:%d\r\n",tp_x,tp_y);
+//		Delay_ms(500);
+//		return true;
+//	}
+	
+	
+//	if(g_tp_event==0)
+//	{
+////		printf("end\r\n");
+////		Delay_ms(500);
+//		return false;
+//	}
+//	else if(g_tp_event==1)
+//	{
+//		printf("press\r\n");
+//		Delay_ms(500);
+//		return true;
+//	}
+//	if (TP_IRQ == 0)
+//	{
+//		PFout(9) = 0;
+//		printf("IRQµÍ\r\n");
+//		Delay_s(3);
+//		PFout(9) = 1;
+//	}
+	
+//	PBout(7) = 0;
+//	Delay_ms(50);
+//	PBout(7) = 1;
+//	Delay_ms(50);
+	
+	if(g_tp_event==0)
+		goto end;
+	
+	
+	tp_read(&g_tp_x,&g_tp_y);
+	
+	printf("finger=%d\r\n",tp_finger_num_get());
+	
+	if(tp_finger_num_get())
+		return true;
+end:	
+    return false;
 }
 
 /*Get the x and y coordinates if the touchpad is pressed*/
 static void touchpad_get_xy(lv_coord_t * x, lv_coord_t * y)
 {
     /*Your code comes here*/
-	uint16_t tp_x, tp_y;
+	(*x) = g_tp_x;
+	(*y) = g_tp_y;
 	
-	if (tp_read(&tp_x, &tp_y) && (lcd_get_direction() == 3))
-	{
-		(*x) = g_lcd_width - tp_y;
-		(*y) = tp_x;
-	}
+	printf("x=%d y=%d\r\n",g_tp_x,g_tp_y);
+	
+	if(g_tp_event)
+		g_tp_event=0;
 }
 
 /*------------------

@@ -1,0 +1,6 @@
+--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I ..\DEVICE_LIB\inc -I ..\CMSIS -I ..\SYSTEM -I ..\USER -I ..\HARDWARE\inc -I ..\HARDWARE\IIC
+-I.\RTE\_project
+-ID:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include
+-ID:\Keil_v5\ARM\CMSIS\Include
+-D__UVISION_VERSION="524" -DSTM32F407xx -DUSE_STDPERIPH_DRIVER -DSTM32F40_41xxx
+-o ..\obj\iic_xzdtx.o --omf_browse ..\obj\iic_xzdtx.crf --depend ..\obj\iic_xzdtx.d "..\HARDWARE\IIC\IIC_xzdtx.c"

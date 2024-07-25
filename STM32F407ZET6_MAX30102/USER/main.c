@@ -32,6 +32,16 @@ uint8_t uch_dummy;
 
 #define MAX_BRIGHTNESS 255
 
+/*	先配数据线，再配时钟线
+	PA4-->Camera5, PB7-->Camera3
+	MAX30102的中断线配Camera7-->PG15
+*/
+I2C_Port_t max30102_port = {
+								GPIOA, GPIOB,
+								GPIO_Pin_4, GPIO_Pin_7, 
+								RCC_AHB1Periph_GPIOA, RCC_AHB1Periph_GPIOB
+							};
+
 int main(void)
 {
 	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
@@ -48,7 +58,7 @@ int main(void)
 
 	Uasrt1_Init();
 	
-	max30102_init();
+	max30102_init(&max30102_port);
 
 	printf("This is max30102 test.\r\n");
 
@@ -96,7 +106,7 @@ int main(void)
     {
         while(MAX30102_INT==1);   //wait until the interrupt pin asserts
         
-		max30102_FIFO_ReadBytes(REG_FIFO_DATA,temp);
+		max30102_FIFO_ReadBytes(&max30102_port, REG_FIFO_DATA,temp);
 		aun_red_buffer[i] =  (long)((long)((long)temp[0]&0x03)<<16) | (long)temp[1]<<8 | (long)temp[2];    // Combine values to get the actual number
 		aun_ir_buffer[i] = (long)((long)((long)temp[3] & 0x03)<<16) |(long)temp[4]<<8 | (long)temp[5];   // Combine values to get the actual number
             
@@ -132,7 +142,7 @@ int main(void)
         {
             un_prev_data=aun_red_buffer[i-1];
             while(MAX30102_INT==1);
-            max30102_FIFO_ReadBytes(REG_FIFO_DATA,temp);
+            max30102_FIFO_ReadBytes(&max30102_port, REG_FIFO_DATA,temp);
 			aun_red_buffer[i] =  (long)((long)((long)temp[0]&0x03)<<16) | (long)temp[1]<<8 | (long)temp[2];    // Combine values to get the actual number
 			aun_ir_buffer[i] = (long)((long)((long)temp[3] & 0x03)<<16) |(long)temp[4]<<8 | (long)temp[5];   // Combine values to get the actual number
         

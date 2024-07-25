@@ -1,11 +1,13 @@
 #include "includes.h"
 
-uint32_t g_lcd_width =LCD_WIDTH;
-uint32_t g_lcd_height=LCD_HEIGHT;
-uint32_t g_lcd_direction=0;
+uint32_t g_lcd_width 		=	LCD_WIDTH;
+uint32_t g_lcd_height		=	LCD_HEIGHT;
+uint32_t g_lcd_direction	=	0;
 
 void spi1_send_byte(uint8_t byte)
 {
+#if LCD_SOFT_SPI_ENABLE
+	
   unsigned char counter;
 
   for (counter = 0; counter < 8; counter++)
@@ -26,7 +28,18 @@ void spi1_send_byte(uint8_t byte)
     SPI_SCK_1;
   }
   
-  SPI_SCK_0;	
+  SPI_SCK_0;
+  
+#else
+	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET)
+		;
+	SPI_I2S_SendData(SPI1, byte);
+
+	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET)
+		;
+	SPI_I2S_ReceiveData(SPI1);	
+	
+#endif  
 }
 
 void lcd_send_cmd(uint8_t cmd)
@@ -259,7 +272,9 @@ void lcd_show_float(uint32_t x,uint32_t y,float num,uint32_t len,uint32_t fc,uin
 
 void lcd_init(void) ////ST7789V2
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
+//	GPIO_InitTypeDef GPIO_InitStructure;
+	
+#if LCD_SOFT_SPI_ENABLE
 	
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD | RCC_AHB1Periph_GPIOE, ENABLE);
 
@@ -277,6 +292,57 @@ void lcd_init(void) ////ST7789V2
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;     // 推挽输出，Push Pull，使能了PMOS还有NMOS管
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;   // 不使能上下拉电阻
 	GPIO_Init(GPIOE, &GPIO_InitStructure);
+
+#else
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOG, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
+
+	// SCK=PB3,  MOSI=PB5
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;	 //复用功能模式
+	GPIO_InitStructure.GPIO_Speed = GPIO_High_Speed; //引脚高速工作，收到指令立即工作；缺点：功耗高
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;	 //增加输出电流的能力
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL; //不需要上下拉电阻
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;	 //输出模式
+	GPIO_InitStructure.GPIO_Speed = GPIO_High_Speed; //引脚高速工作，收到指令立即工作；缺点：功耗高
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;	 //增加输出电流的能力
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL; //不需要上下拉电阻
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7 | GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;	 //输出模式
+	GPIO_InitStructure.GPIO_Speed = GPIO_High_Speed; //引脚高速工作，收到指令立即工作；缺点：功耗高
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;	 //增加输出电流的能力
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL; //不需要上下拉电阻
+	GPIO_Init(GPIOG, &GPIO_InitStructure);
+
+	// PB3 PB5连接到SPI1硬件
+	GPIO_PinAFConfig(GPIOB, GPIO_PinSource3, GPIO_AF_SPI1);
+	GPIO_PinAFConfig(GPIOB, GPIO_PinSource5, GPIO_AF_SPI1);
+
+	//关闭SPI1
+	SPI_Cmd(SPI1, DISABLE);
+
+	//设置SPI
+	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex; //全双工收发
+	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;					   //设为主机
+	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;				   // 8位帧结构
+	SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;						   //空闲时时钟为低
+	SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;					   //第1个时钟沿捕获数据
+	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;						   // CS由SSI位控制（自控）
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2; //波特率为2分频
+	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;				   //高位先传送
+	SPI_InitStructure.SPI_CRCPolynomial = 0;						   //不使用CRC
+	SPI_Init(SPI1, &SPI_InitStructure);								   //初始化SPI1
+
+	//启动SPI1
+	SPI_Cmd(SPI1, ENABLE);
+	
+#endif
 
 	//该1.69英寸屏幕背光为低电平点亮
 	LCD_BLK_0;
@@ -536,7 +602,7 @@ uint32_t lcd_get_direction(void)
 
 void spi1_tx_dma_init(uint32_t DMA_Memory0BaseAddr, uint16_t DMA_BufferSize, uint32_t DMA_MemoryDataSize, uint32_t DMA_MemoryInc)
 {
-	NVIC_InitTypeDef 		NVIC_InitStructure;
+//	NVIC_InitTypeDef 		NVIC_InitStructure;
 	DMA_InitTypeDef 		DMA_InitStructure;
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE); // DMA2时钟使能
@@ -544,8 +610,8 @@ void spi1_tx_dma_init(uint32_t DMA_Memory0BaseAddr, uint16_t DMA_BufferSize, uin
 	DMA_DeInit(DMA2_Stream3);
 
 	// 等待DMA2_Stream1可配置
-	while (DMA_GetCmdStatus(DMA2_Stream3) != DISABLE)
-		;
+	while (DMA_GetCmdStatus(DMA2_Stream3) != DISABLE);
+//	printf("while over\r\n");
 
 	/* 配置 DMA Stream */
 	DMA_InitStructure.DMA_Channel = DMA_Channel_3;							// 通道3 SPI1通道
@@ -584,7 +650,7 @@ void spi1_tx_dma_init(uint32_t DMA_Memory0BaseAddr, uint16_t DMA_BufferSize, uin
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;						 
     /* 配置NVIC */		
     NVIC_Init(&NVIC_InitStructure);
-
+//	printf("dma init over\r\n");
 }
 
 void spi1_tx_dma_start(void)
@@ -597,13 +663,18 @@ void spi1_tx_dma_stop(void)
 	DMA_Cmd(DMA2_Stream3, DISABLE);
 }
 
+extern lv_disp_drv_t *g_disp_drvp;
+
 void DMA2_Stream3_IRQHandler(void)
 {
     // DMA 发送完成
     if(DMA_GetITStatus(DMA2_Stream3, DMA_IT_TCIF3))	
     {
+//		printf("dma\r\n");
         // 清除DMA发送完成标志
         DMA_ClearITPendingBit(DMA2_Stream3, DMA_IT_TCIF3);	
+		
+		lv_disp_flush_ready(g_disp_drvp);
 		
         // 片选拉高，数据发送完毕	
         SPI_CS_1;	

@@ -14,25 +14,30 @@
 #include "Tim.h"
 #include "Delay.h"
 #include "Led.h"
+#include "sys.h"
 
 int main(void)
 {
-//	Tim14_Init();
+	Tim14_Init();
 //	Tim13_Init();
-	Led_Init();
+//	Led_Init();
 	
 	while(1)
 	{
 //		for(int i=0; i<100; i++)
 //		{
-//			TIM13->CCR1 = i;
+//			TIM14->CCR1 = i;
 //			Delay_ms(10);
 //		}
 //		
 //		for(int i=100; i>=0; i--)
 //		{
-//			TIM13->CCR1 = i;
+//			TIM14->CCR1 = i;
 //			Delay_ms(10);
 //		}
+		PBout(7) = 1;
+		Delay_ms(50);
+		PBout(7) = 0;
+		Delay_ms(50);
 	}
 }

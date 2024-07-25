@@ -401,11 +401,6 @@
               <FilePath>..\SYSTEM\Delay\Delay.c</FilePath>
             </File>
             <File>
-              <FileName>Iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SYSTEM\Iwdg\Iwdg.c</FilePath>
-            </File>
-            <File>
               <FileName>sys.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\sys\sys.c</FilePath>
@@ -454,11 +449,6 @@
               <FileName>stm32f4xx_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\DEVICE_LIB\src\stm32f4xx_usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\DEVICE_LIB\src\stm32f4xx_iwdg.c</FilePath>
             </File>
           </Files>
         </Group>

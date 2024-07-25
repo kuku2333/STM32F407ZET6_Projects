@@ -53,6 +53,7 @@ void IIC_Start(void)
 		所以，先把两根线都置高，再让数据线置低，这时时
 		钟线还是高，就是在告诉从机开始了
 	*/
+//	IIC_Digital_WRITE(Bit_SET);//数据线高,为了确保SDA高
 	SDA_W(Bit_SET);//数据线高,为了确保SDA高
 	SCL_W(Bit_SET);//时钟线高
 	Delay_us(DELAY_TIME);//用5us好
